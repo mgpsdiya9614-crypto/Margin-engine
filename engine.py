@@ -1,14 +1,28 @@
 import pandas as pd
 
-def process_csv(df):
-    df = df.copy()
+def analyze_margin(df):
 
-    # Example profit calculation logic
+    report = {}
+
     if "Revenue" in df.columns and "Cost" in df.columns:
-        df["Profit"] = df["Revenue"] - df["Cost"]
-        df["Margin %"] = (df["Profit"] / df["Revenue"]) * 100
-    else:
-        df["Profit"] = "Revenue/Cost columns missing"
-        df["Margin %"] = ""
 
-    return df
+        total_revenue = df["Revenue"].sum()
+        total_cost = df["Cost"].sum()
+
+        profit = total_revenue - total_cost
+
+        if total_revenue > 0:
+            margin = (profit / total_revenue) * 100
+        else:
+            margin = 0
+
+        report["Total Revenue"] = total_revenue
+        report["Total Cost"] = total_cost
+        report["Profit"] = profit
+        report["Margin %"] = round(margin,2)
+
+    else:
+
+        report["Error"] = "Columns Revenue and Cost required"
+
+    return report
