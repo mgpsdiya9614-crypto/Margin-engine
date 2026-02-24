@@ -1,6 +1,5 @@
 import streamlit as st
-from engine import process_files
-
+import engine
 st.set_page_config(
     page_title="Margin Engine",
     layout="wide"
@@ -46,7 +45,7 @@ if st.button("Calculate Profit"):
 
         try:
 
-            summary, full_data, loss_skus = process_files(
+            summary, full_data, loss_skus = engine.process_files(
                 sales_file,
                 ads_file,
                 refunds_file,
