@@ -1,117 +1,54 @@
 import streamlit as st
+import pandas as pd
 import engine
-st.set_page_config(
-    page_title="Margin Engine",
-    layout="wide"
-)
 
-st.title("📊 Weekly Contribution Margin Engine")
+st.title("Profit Margin Dashboard")
 
-st.markdown(
-"""
-Upload your weekly CSV files to calculate real profit clarity.
-"""
-)
+st.header("Upload Files")
 
-# Uploaders
+sales_file = st.file_uploader("Upload Sales CSV")
+ads_file = st.file_uploader("Upload Ads CSV")
+refund_file = st.file_uploader("Upload Refund CSV")
 
-st.subheader("Upload Files")
+if sales_file and ads_file and refund_file:
 
-sales_file = st.file_uploader(
-    "Upload Sales CSV",
-    type=["csv"]
-)
+    result = engine.process_files(
+        sales_file,
+        ads_file,
+        refund_file
+    )
 
-ads_file = st.file_uploader(
-    "Upload Ads CSV",
-    type=["csv"]
-)
+    st.header("Results")
 
-refunds_file = st.file_uploader(
-    "Upload Refunds CSV",
-    type=["csv"]
-)
+    st.write("Revenue:", result["revenue"])
+    st.write("Ad Spend:", result["ads"])
+    st.write("Refunds:", result["refunds"])
+    st.write("Profit:", result["profit"])
 
-cogs_file = st.file_uploader(
-    "Upload COGS CSV",
-    type=["csv"]
-)
+    st.subheader("Loss SKUs")
 
-# Run engine
-
-if st.button("Calculate Profit"):
-
-    if sales_file and ads_file and refunds_file and cogs_file:
-
-        try:
-
-            summary, full_data, loss_skus = engine.process_files(
-                sales_file,
-                ads_file,
-                refunds_file,
-                cogs_file
-            )
-
-            st.subheader("📌 Summary")
-
-            col1, col2, col3, col4, col5 = st.columns(5)
-
-            col1.metric(
-                "Revenue",
-                f"₹{summary['Total Revenue']}"
-            )
-
-            col2.metric(
-                "Ad Spend",
-                f"₹{summary['Total Ad Spend']}"
-            )
-
-            col3.metric(
-                "Refunds",
-                f"₹{summary['Total Refunds']}"
-            )
-
-            col4.metric(
-                "COGS",
-                f"₹{summary['Total COGS']}"
-            )
-
-            col5.metric(
-                "Contribution Margin",
-                f"₹{summary['Contribution Margin']}"
-            )
+    st.write(result["loss_skus"])
 
 
-            st.subheader("📦 SKU Breakdown")
+    st.header("Ask Questions")
 
-            st.dataframe(
-                full_data,
-                use_container_width=True
-            )
+    question = st.text_input("Ask about your data")
 
+    if question:
 
-            st.subheader("⚠ Loss Making SKUs")
+        q = question.lower()
 
-            if loss_skus.empty:
+        if "profit" in q:
+            st.write("Your profit is:", result["profit"])
 
-                st.success(
-                    "No loss making SKUs"
-                )
+        elif "revenue" in q:
+            st.write("Your revenue is:", result["revenue"])
 
-            else:
+        elif "refund" in q:
+            st.write("Your refunds are:", result["refunds"])
 
-                st.dataframe(
-                    loss_skus,
-                    use_container_width=True
-                )
+        elif "ads" in q:
+            st.write("Your ad spend is:", result["ads"])
 
-
-        except Exception as e:
-
-            st.error(f"Error: {e}")
-
-    else:
-
-        st.warning(
-            "Upload all 4 files"
-        )
+        else:
+            st.write("I don't understand yet.")
