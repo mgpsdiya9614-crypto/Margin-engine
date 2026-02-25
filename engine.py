@@ -1,28 +1,36 @@
 import pandas as pd
 
-def analyze_margin(df):
+def process_files(sales_file, ads_file, refund_file):
 
-    report = {}
+    sales = pd.read_csv(sales_file)
+    ads = pd.read_csv(ads_file)
+    refunds = pd.read_csv(refund_file)
 
-    if "Revenue" in df.columns and "Cost" in df.columns:
+    total_revenue = sales["Revenue"].sum()
+    total_cost = sales["Cost"].sum()
 
-        total_revenue = df["Revenue"].sum()
-        total_cost = df["Cost"].sum()
+    ad_spend = ads["Spend"].sum()
+    refund_total = refunds["Refunds"].sum()
 
-        profit = total_revenue - total_cost
+    profit = total_revenue - total_cost - ad_spend - refund_total
 
-        if total_revenue > 0:
-            margin = (profit / total_revenue) * 100
-        else:
-            margin = 0
-
-        report["Total Revenue"] = total_revenue
-        report["Total Cost"] = total_cost
-        report["Profit"] = profit
-        report["Margin %"] = round(margin,2)
-
+    if total_revenue > 0:
+        margin = (profit / total_revenue) * 100
     else:
+        margin = 0
 
-        report["Error"] = "Columns Revenue and Cost required"
+    sales["Profit"] = sales["Revenue"] - sales["Cost"]
 
-    return report
+    loss_skus = sales[sales["Profit"] < 0]
+
+    result = {
+        "Revenue": total_revenue,
+        "Cost": total_cost,
+        "Ads": ad_spend,
+        "Refunds": refund_total,
+        "Profit": profit,
+        "Margin": round(margin,2),
+        "Loss_SKUs": loss_skus
+    }
+
+    return result
