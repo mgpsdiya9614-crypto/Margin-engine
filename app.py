@@ -10,6 +10,7 @@ sales_file = st.file_uploader("Upload Sales CSV")
 ads_file = st.file_uploader("Upload Ads CSV")
 refund_file = st.file_uploader("Upload Refund CSV")
 
+
 if sales_file and ads_file and refund_file:
 
     result = engine.process_files(
@@ -20,35 +21,13 @@ if sales_file and ads_file and refund_file:
 
     st.header("Results")
 
-    st.write("Revenue:", result["revenue"])
-    st.write("Ad Spend:", result["ads"])
-    st.write("Refunds:", result["refunds"])
-    st.write("Profit:", result["profit"])
+    st.write("Revenue:", result["Revenue"])
+    st.write("Cost:", result["Cost"])
+    st.write("Ads:", result["Ads"])
+    st.write("Refunds:", result["Refunds"])
+    st.write("Profit:", result["Profit"])
+    st.write("Margin %:", result["Margin"])
 
-    st.subheader("Loss SKUs")
+    st.header("Loss SKUs")
 
-    st.write(result["loss_skus"])
-
-
-    st.header("Ask Questions")
-
-    question = st.text_input("Ask about your data")
-
-    if question:
-
-        q = question.lower()
-
-        if "profit" in q:
-            st.write("Your profit is:", result["profit"])
-
-        elif "revenue" in q:
-            st.write("Your revenue is:", result["revenue"])
-
-        elif "refund" in q:
-            st.write("Your refunds are:", result["refunds"])
-
-        elif "ads" in q:
-            st.write("Your ad spend is:", result["ads"])
-
-        else:
-            st.write("I don't understand yet.")
+    st.dataframe(result["Loss_SKUs"])
