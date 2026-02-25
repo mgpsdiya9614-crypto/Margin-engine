@@ -1,15 +1,11 @@
 import streamlit as st
-import pandas as pd
 import engine
 
 st.title("Profit Margin Dashboard")
 
-st.header("Upload Files")
-
-sales_file = st.file_uploader("Upload Sales CSV")
-ads_file = st.file_uploader("Upload Ads CSV")
-refund_file = st.file_uploader("Upload Refund CSV")
-
+sales_file = st.file_uploader("Sales CSV")
+ads_file = st.file_uploader("Ads CSV")
+refund_file = st.file_uploader("Refund CSV")
 
 if sales_file and ads_file and refund_file:
 
@@ -19,15 +15,11 @@ if sales_file and ads_file and refund_file:
         refund_file
     )
 
-    st.header("Results")
-
-    st.write("Revenue:", result["Revenue"])
-    st.write("Cost:", result["Cost"])
-    st.write("Ads:", result["Ads"])
-    st.write("Refunds:", result["Refunds"])
-    st.write("Profit:", result["Profit"])
-    st.write("Margin %:", result["Margin"])
-
-    st.header("Loss SKUs")
+    st.write(result["Revenue"])
+    st.write(result["Cost"])
+    st.write(result["Ads"])
+    st.write(result["Refunds"])
+    st.write(result["Profit"])
+    st.write(result["Margin"])
 
     st.dataframe(result["Loss_SKUs"])
